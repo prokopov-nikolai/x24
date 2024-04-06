@@ -46,23 +46,21 @@ class Googlesheets extends StorageBase implements Storage {
         $data = $this->readData();
         $firstLetter = mb_substr($search, 0, 1);
 
-        $dataResult = [];
+        $dataResult = '';
 
         if (array_key_exists($firstLetter, $data)) {
             foreach ($data[$firstLetter] as $item) {
                 if ($item[0] === $search) {
-                    $dataResult[] = $item;
+                    $dataResult .= "{$item[1]} - {$item[2]}шт.\r\n";
                 }
             }
         }
 
-        if (!empty($dataResult)) {
-            foreach ($dataResult as $item) {
-                $result .= "{$item[1]} - {$item[2]}шт.\r\n";
-            }
-        } else {
-            $result .= 'Ничего не найдено';
+        if (empty($dataResult)) {
+            $dataResult = 'Ничего не найдено';
         }
+
+        $result .= $dataResult;
 
         return $result;
     }
