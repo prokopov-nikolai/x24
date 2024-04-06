@@ -59,14 +59,10 @@ class Googlesheets extends StorageBase implements Storage {
             }
         }
 
-        $maxValue = max($findItems);
+        $indexes = array_keys($findItems, count($parts));
 
-        if ($maxValue > 0) {
-            $indexes = array_keys($findItems, $maxValue);
-
-            foreach($indexes as $index) {
-                $result[] = $data[$index];
-            }
+        foreach($indexes as $index) {
+            $result[] = $data[$index];
         }
 
         return $result;
