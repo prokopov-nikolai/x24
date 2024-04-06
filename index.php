@@ -19,11 +19,7 @@ $tgMsg = [
 if (isset($req->message)) {
     $search = trim($req->message->text);
     $googlesheets = new Googlesheets($config['googlesheet_database_url'], $cache);
-    $result = $googlesheets->searchOne($search);
-
-    if (!empty($result)) {
-        $tgMsg['text'] = $result;
-    }
+    $tgMsg['text'] = $googlesheets->searchOne($search);
 }
 
 $telegram->SendMessage($tgMsg);
