@@ -29,9 +29,7 @@ class Googlesheets extends StorageBase implements Storage {
             $csv = file_get_contents($this->getUrl());
             $csv = explode("\r\n", $csv);
             $data = array_map('str_getcsv', $csv);
-
-            $data = $this->splitDataByFirstLetter($data);
-            $this->cache->set('googlesheetsData', $data, 5);
+            $this->cache->set('googlesheetsData', $data, 60);
         }
 
         $this->setTableHeaders(array_shift($data));
@@ -40,37 +38,35 @@ class Googlesheets extends StorageBase implements Storage {
         return $data;
     }
 
-    public function searchOne(string $search): string
+    public function search(string $search): array
     {
-        $result = "<b>{$search}:</b>\r\n";
+        $parts = explode(" ", $search);
+
+        $result = [];
+        $findItems = [];
+
         $data = $this->readData();
-        $firstLetter = mb_substr($search, 0, 1);
+        foreach($data as $index => $row) {
+            $text = mb_strtolower($row[0]);
+            foreach($parts as $part) {
+                if (!array_key_exists($index, $findItems)) {
+                    $findItems[$index] = 0;
+                }
 
-        $dataResult = '';
-
-        if (array_key_exists($firstLetter, $data)) {
-            foreach ($data[$firstLetter] as $item) {
-                if ($item[0] === $search) {
-                    $dataResult .= "{$item[1]} - {$item[2]}шт.\r\n";
+                if (mb_strpos($text, $part) !== false) {
+                    $findItems[$index]++;
                 }
             }
         }
 
-        if (empty($dataResult)) {
-            $dataResult = 'Ничего не найдено';
-        }
+        $maxValue = max($findItems);
 
-        $result .= $dataResult;
+        if ($maxValue > 0) {
+            $indexes = array_keys($findItems, $maxValue);
 
-        return $result;
-    }
-
-    private function splitDataByFirstLetter(array $data): array {
-        $result = [];
-
-        foreach ($data as $item) {
-            $firstLetter = mb_substr($item[0], 0, 1);
-            $result[$firstLetter][] = $item;
+            foreach($indexes as $index) {
+                $result[] = $data[$index];
+            }
         }
 
         return $result;

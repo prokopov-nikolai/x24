@@ -12,26 +12,25 @@ class Telegram
     }
 
     /**
-     *  $aData['text'] = "";
-     *  $aData['parse_mode'] = 'HTML';
-     *  $aData['chat_id'] = int
-     * @param $aData
+     *  $data['text'] = "";
+     *  $data['parse_mode'] = 'HTML';
+     *  $data['chat_id'] = int
+     * @param $data
      */
-    public function SendMessage(array $aData): string
+    public function SendMessage(array $data): string
     {
-        $oCurl = curl_init();
+        $curl = curl_init();
         curl_setopt_array(
-            $oCurl,
+            $curl,
             array(
                 CURLOPT_URL => 'https://api.telegram.org/bot' . $this->telegramToken . '/sendMessage',
                 CURLOPT_POST => TRUE,
                 CURLOPT_RETURNTRANSFER => TRUE,
                 CURLOPT_TIMEOUT => 60,
-                CURLOPT_POSTFIELDS => $aData,
+                CURLOPT_POSTFIELDS => $data,
             )
         );
-        $sResponse = curl_exec($oCurl);
-//            file_put_contents(Config::Get('path.root.server') . '/uploads/telegram.answer.txt', $sResponse);
+        $sResponse = curl_exec($curl);
         return $sResponse;
     }
 
