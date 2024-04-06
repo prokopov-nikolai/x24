@@ -42,7 +42,7 @@ class Googlesheets extends StorageBase implements Storage {
 
     public function searchOne(string $search): string
     {
-        $result = '<br>'.$search .':</b><br>';
+        $result = "<b>{$search}:</b>\r\n";
         $data = $this->readData();
         $firstLetter = mb_substr($search, 0, 1);
 
