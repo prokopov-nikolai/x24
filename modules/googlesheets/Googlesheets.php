@@ -40,7 +40,7 @@ class Googlesheets extends StorageBase implements Storage {
 
     public function search(string $search): array
     {
-        $parts = explode(" ", $search);
+        $parts = explode(" ", mb_strtolower($search));
 
         $result = [];
         $findItems = [];
